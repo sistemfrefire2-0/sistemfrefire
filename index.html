@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Free Fire 2.0</title>
+    <style>
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 15px #1cb5e0; }
+            50% { box-shadow: 0 0 30px #ffffff; }
+        }
+
+        @keyframes buttonHover {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+
+        @keyframes gradientBackground {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(270deg, #1cb5e0, #000046);
+            background-size: 200% 200%;
+            animation: gradientBackground 8s infinite ease-in-out;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+        header, footer {
+            background: linear-gradient(to right, #1cb5e0, #000046);
+            color: #ffffff;
+            text-shadow: 2px 2px 10px #000000;
+            text-align: center;
+            padding: 2em;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.6);
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        main {
+            padding: 2em;
+            animation: fadeIn 1.8s ease-in-out;
+        }
+
+        form {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.6);
+            padding: 2em;
+            max-width: 600px;
+            margin: auto;
+            color: #ffffff;
+            animation: glow 2s infinite ease-in-out;
+        }
+
+        select, input[type="text"] {
+            width: 100%;
+            border: 1px solid #ffffff;
+            border-radius: 8px;
+            padding: 1em;
+            margin: 0.8em 0 1.5em;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            transition: all 0.3s ease-in-out;
+            text-shadow: 1px 1px 5px #000000;
+        }
+
+        select:focus, input[type="text"]:focus {
+            border-color: #ffffff;
+            outline: none;
+            box-shadow: 0 0 15px #1cb5e0;
+            transform: scale(1.05);
+        }
+
+        /* Fondo negro para el menú desplegable de marcas */
+        select option {
+            background-color: black;
+            color: white;
+        }
+
+        button {
+            background: linear-gradient(to right, #1cb5e0, #000046);
+            color: #ffffff;
+            border: none;
+            padding: 1em 2em;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.2em;
+            text-shadow: 2px 2px 8px #000000;
+            transition: all 0.3s ease-in-out;
+            animation: buttonHover 2s infinite ease-in-out;
+        }
+
+        button:hover {
+            background: linear-gradient(to right, #000046, #1cb5e0);
+            transform: scale(1.2);
+            box-shadow: 0 8px 20px #1cb5e0;
+        }
+
+        .message {
+            font-weight: bold;
+            margin-left: 1em;
+            display: inline-block;
+            text-shadow: 2px 2px 10px #000000;
+        }
+
+        #errorMessage {
+            color: #ff5555;
+            text-shadow: 2px 2px 10px #ff0000;
+            animation: fadeIn 0.8s ease-in-out;
+        }
+
+        #accessSection {
+            text-align: center;
+            animation: fadeIn 2s ease-in-out;
+        }
+
+        .menu-icon {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            cursor: pointer;
+            font-size: 24px;
+            color: #ffffff;
+            z-index: 1000;
+        }
+
+        .menu-options {
+            position: fixed;
+            top: 60px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 8px;
+            padding: 10px;
+            display: none;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .menu-options button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.3s ease-in-out;
+        }
+
+        .menu-options button:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .iframe-container {
+            position: relative;
+            overflow: hidden;
+            width: 95%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding-top: 56.25%;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(28,181,224,0.3);
+        }
+
+        .iframe-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .modifications-content {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .modifications-content h2 {
+            margin: 30px 0;
+            font-size: 1.8em;
+            text-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+    <div id="accessSection">
+        <h2>Ingrese el código de acceso:</h2>
+        <input type="text" id="accessCode" placeholder="Código de acceso">
+        <button id="accessButton">Acceder</button>
+        <p id="errorMessage" style="display: none;">Código incorrecto, intente nuevamente.</p>
+    </div>
+
+    <div id="mainSection" style="display: none;">
+        <div class="menu-icon" id="menuIcon">☰</div>
+        <div class="menu-options" id="menuOptions">
+            <button id="modificationsBtn">Modificaciones</button>
+            <button id="sensitivitiesBtn">Sensibilidades</button>
+            <button id="customHudsBtn">Custom HUDs</button>
+        </div>
+
+        <header>
+            <h1>Sistema Free Fire 2.0</h1>
+            <p id="headerSubtitle">Configuración optimizada para tiros a la cabeza</p>
+        </header>
+
+        <main id="mainContent">
+            <form id="settingsForm">
+                <label for="deviceBrand">Marca del dispositivo:</label>
+                <select id="deviceBrand" name="deviceBrand" required>
+                    <option value="" disabled selected>Seleccione una marca</option>
+                    <option value="apple">Apple</option>
+                    <option value="samsung">Samsung</option>
+                    <option value="xiaomi">Xiaomi</option>
+                    <option value="huawei">Huawei</option>
+                    <option value="motorola">Motorola</option>
+                    <option value="oppo">Oppo</option>
+                    <option value="vivo">Vivo</option>
+                    <option value="realme">Realme</option>
+                    <option value="oneplus">OnePlus</option>
+                    <option value="google">Google (Pixel)</option>
+                    <option value="sony">Sony</option>
+                    <option value="asus">Asus</option>
+                    <option value="honor">Honor</option>
+                    <option value="lenovo">Lenovo</option>
+                    <option value="zte">ZTE</option>
+                    <option value="infinix">Infinix</option>
+                    <option value="blackview">Blackview</option>
+                    <option value="tecno">Tecno</option>
+                </select>
+
+                <label for="deviceModel">Modelo del dispositivo:</label>
+                <input type="text" id="deviceModel" name="deviceModel" placeholder="Escriba el modelo de su dispositivo" required disabled>
+
+                <label for="general">General:</label>
+                <input type="text" id="general" name="general" readonly>
+
+                <label for="redDot">Mira de punto rojo:</label>
+                <input type="text" id="redDot" name="redDot" readonly>
+
+                <label for="x2">Mira x2:</label>
+                <input type="text" id="x2" name="x2" readonly>
+
+                <label for="x4">Mira X4:</label>
+                <input type="text" id="x4" name="x4" readonly>
+
+                <label for="gyroscope">Francotirador:</label>
+                <input type="text" id="gyroscope" name="gyroscope" readonly>
+
+                <label for="camera">Cámara:</label>
+                <input type="text" id="camera" name="camera" readonly>
+
+                <label for="shootButtonSize">Tamaño del botón de disparo:</label>
+                <input type="text" id="shootButtonSize" name="shootButtonSize" readonly>
+
+                <label for="dpi">DPI:</label>
+                <input type="text" id="dpi" name="dpi" readonly>
+
+                <button type="submit">Generar</button>
+                <span class="message" id="sensitivityMessage"></span>
+            </form>
+        </main>
+
+        <div id="modificationsSection" class="hidden modifications-content">
+            <h2>Modificación para Xiaomi</h2>
+            <div class="iframe-container">
+                <iframe src="https://drive.google.com/file/d/1G2jKj5oAoiIbhfCXtCB-sCyuZcGZxXlN/preview" allow="autoplay"></iframe>
+            </div>
+
+            <h2>Modificación para Motorola</h2>
+            <div class="iframe-container">
+                <iframe src="https://drive.google.com/file/d/1GNHuaA6Sd8RPcnWbmYkea672B_HNKZnX/preview" allow="autoplay"></iframe>
+            </div>
+
+            <h2>Modificación para iPhone</h2>
+            <div class="iframe-container">
+                <iframe src="https://drive.google.com/file/d/1GEmIBTAStPiPT-xw08m9c2PGJm5mqS4u/preview" allow="autoplay"></iframe>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2025 Sistema Free Fire</p>
+        </footer>
+    </div>
+
+    <script>
+        document.getElementById('accessButton').addEventListener('click', function () {
+            const accessCode = document.getElementById('accessCode').value;
+
+            if (accessCode === 'sistem') {
+                document.getElementById('accessSection').style.display = 'none';
+                document.getElementById('mainSection').style.display = 'block';
+            } else {
+                document.getElementById('errorMessage').style.display = 'block';
+            }
+        });
+
+        document.getElementById('deviceBrand').addEventListener('change', function () {
+            const modelField = document.getElementById('deviceModel');
+            modelField.disabled = false;
+            modelField.value = '';
+        });
+
+        document.getElementById('settingsForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            function getRandomValue(min, max) {
+                return Math.floor(Math.random() * (max - min + 1)) + min;
+            }
+
+            function getSensitivityType() {
+                const random = Math.random() * 100;
+                if (random <= 33) return "baja";
+                if (random <= 66) return "media";
+                return "alta";
+            }
+
+            function getOptimizedSensitivity(type, brand) {
+                let min, max;
+                switch (type) {
+                    case "baja":
+                        min = 120;
+                        max = 150;
+                        break;
+                    case "media":
+                        min = 151;
+                        max = 170;
+                        break;
+                    case "alta":
+                        min = 171;
+                        max = 189;
+                        break;
+                }
+
+                // Ajustes específicos para cada marca
+                if (brand === 'apple') {
+                    min += 5;
+                    max += 5;
+                } else if (brand === 'samsung' || brand === 'xiaomi') {
+                    min += 3;
+                    max += 3;
+                } else if (brand === 'huawei' || brand === 'motorola') {
+                    min += 2;
+                    max += 2;
+                }
+
+                return getRandomValue(min, max);
+            }
+
+            const sensitivityType = getSensitivityType();
+            const brand = document.getElementById('deviceBrand').value;
+
+            const sensitivities = ['general', 'redDot', 'x2', 'x4', 'gyroscope', 'camera'];
+            sensitivities.forEach(id => {
+                const value = getOptimizedSensitivity(sensitivityType, brand);
+                document.getElementById(id).value = value;
+            });
+
+            if (brand === 'apple') {
+                document.getElementById('dpi').value = getRandomValue(60, 120);
+            } else {
+                document.getElementById('dpi').value = Math.random() < 0.5 ? 'sin DPI' : getRandomValue(450, 600);
+            }
+
+            document.getElementById('shootButtonSize').value = getRandomValue(45, 58) + '%';
+
+            const sensitivityMessageElement = document.getElementById('sensitivityMessage');
+            sensitivityMessageElement.textContent = `Sensibilidad ${sensitivityType}`;
+            sensitivityMessageElement.style.color =
+                sensitivityType === "baja" ? "#ffffff" :
+                sensitivityType === "media" ? "#ffa500" :
+                "#00ff00";
+        });
+
+        const menuIcon = document.getElementById('menuIcon');
+        const menuOptions = document.getElementById('menuOptions');
+        const mainContent = document.getElementById('mainContent');
+        const modificationsSection = document.getElementById('modificationsSection');
+        const headerSubtitle = document.getElementById('headerSubtitle');
+
+        menuIcon.addEventListener('click', () => {
+            menuOptions.style.display = menuOptions.style.display === 'flex' ? 'none' : 'flex';
+        });
+
+        document.getElementById('modificationsBtn').addEventListener('click', () => {
+            mainContent.classList.add('hidden');
+            modificationsSection.classList.remove('hidden');
+            headerSubtitle.textContent = "Modificaciones";
+        });
+
+        document.getElementById('sensitivitiesBtn').addEventListener('click', () => {
+            mainContent.classList.remove('hidden');
+            modificationsSection.classList.add('hidden');
+            headerSubtitle.textContent = "Configuración optimizada para tiros a la cabeza";
+        });
+
+        document.getElementById('customHudsBtn').addEventListener('click', () => {
+            mainContent.classList.add('hidden');
+            modificationsSection.classList.add('hidden');
+            headerSubtitle.textContent = "Custom HUDs";
+        });
+    </script>
+</body>
+</html>
