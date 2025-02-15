@@ -62,7 +62,7 @@
             animation: glow 2s infinite ease-in-out;
         }
 
-        select, input[type="text"] {
+        select, input[type="text"], input[type="email"], input[type="password"] {
             width: 100%;
             border: 1px solid #ffffff;
             border-radius: 8px;
@@ -74,14 +74,13 @@
             text-shadow: 1px 1px 5px #000000;
         }
 
-        select:focus, input[type="text"]:focus {
+        select:focus, input[type="text"]:focus, input[type="email"]:focus, input[type="password"]:focus {
             border-color: #ffffff;
             outline: none;
             box-shadow: 0 0 15px #1cb5e0;
             transform: scale(1.05);
         }
 
-        /* Fondo negro para el menú desplegable de marcas */
         select option {
             background-color: black;
             color: white;
@@ -119,7 +118,7 @@
             animation: fadeIn 0.8s ease-in-out;
         }
 
-        #accessSection {
+        #accessSection, #loginSection {
             text-align: center;
             animation: fadeIn 2s ease-in-out;
         }
@@ -203,6 +202,14 @@
         <input type="text" id="accessCode" placeholder="Código de acceso">
         <button id="accessButton">Acceder</button>
         <p id="errorMessage" style="display: none;">Código incorrecto, intente nuevamente.</p>
+    </div>
+
+    <div id="loginSection" style="display: none;">
+        <h2>Ingrese sus credenciales:</h2>
+        <input type="email" id="email" placeholder="Correo electrónico">
+        <input type="password" id="password" placeholder="Contraseña">
+        <button id="loginButton">Iniciar sesión</button>
+        <p id="loginErrorMessage" style="display: none;">Correo electrónico o contraseña incorrectos.</p>
     </div>
 
     <div id="mainSection" style="display: none;">
@@ -298,14 +305,50 @@
     </div>
 
     <script>
+        const validCredentials = [
+            { email: 'salcoser778@gmail.com', password: 'Losberros@20' },
+            { email: 'cristobalsistem2.0@gmail.com', password: 'sistemfrefire2.0' }
+        ];
+
+        let loginAttempts = {};
+
         document.getElementById('accessButton').addEventListener('click', function () {
             const accessCode = document.getElementById('accessCode').value;
 
             if (accessCode === 'sistem') {
                 document.getElementById('accessSection').style.display = 'none';
-                document.getElementById('mainSection').style.display = 'block';
+                document.getElementById('loginSection').style.display = 'block';
             } else {
                 document.getElementById('errorMessage').style.display = 'block';
+            }
+        });
+
+        document.getElementById('loginButton').addEventListener('click', function () {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            const validUser = validCredentials.find(user => user.email === email && user.password === password);
+
+            if (validUser) {
+                loginAttempts[email] = (loginAttempts[email] || 0) + 1;
+                if (loginAttempts[email] >= 2) {
+                    localStorage.setItem(`autoLogin_${email}`, JSON.stringify({ email, password }));
+                }
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('mainSection').style.display = 'block';
+            } else {
+                document.getElementById('loginErrorMessage').style.display = 'block';
+            }
+        });
+
+        window.addEventListener('load', function () {
+            const autoLogin = Object.keys(loginAttempts).find(email => loginAttempts[email] >= 2);
+            if (autoLogin) {
+                const { email, password } = JSON.parse(localStorage.getItem(`autoLogin_${autoLogin}`));
+                document.getElementById('email').value = email;
+                document.getElementById('password').value = password;
+                document.getElementById('loginSection').style.display = 'none';
+                document.getElementById('mainSection').style.display = 'block';
             }
         });
 
@@ -346,7 +389,6 @@
                         break;
                 }
 
-                // Ajustes específicos para cada marca
                 if (brand === 'apple') {
                     min += 5;
                     max += 5;
